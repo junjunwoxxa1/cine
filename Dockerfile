@@ -1,23 +1,19 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+FROM webdevops/php-nginx:8.3
 
+# Configurar la ruta pública para Nginx
+ENV WEB_DOCUMENT_ROOT=/app/public
+
+# Variables de entorno para producción
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+
+WORKDIR /app
+
+# Copiar todos los archivos del proyecto al contenedor
 COPY . .
 
-# Permitir que composer se ejecute como root durante el build
-ENV COMPOSER_ALLOW_SUPERUSER 1
-
-# Instalar las dependencias de Laravel
+# Instalar dependencias de Composer correctamente
 RUN composer install --no-dev --optimize-autoloader
 
-# Image config
-ENV SKIP_COMPOSER 1 
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
-
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
-
-CMD ["/start.sh"]
+# Dar los permisos necesarios a las carpetas de Laravel
+RUN chown -R application:application /app/storage /app/bootstrap/cache
