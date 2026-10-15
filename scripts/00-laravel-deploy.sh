@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+echo "Running migrations..."
+touch database/database.sqlite
+php artisan migrate --force
